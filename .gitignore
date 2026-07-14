@@ -1,0 +1,36 @@
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# Env & secrets
+.env
+**/.env
+**/credentials/*.json
+!**/credentials/.gitkeep
+**/google-services.json
+**/firebase-service-account.json
+**/GoogleService-Info.plist
+
+# Go
+backend/bin/
+backend/vendor/
+*.exe
+*.test
+
+# Flutter
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/build/
+mobile/.pub-cache/
+mobile/.pub/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/app/google-services.json
+
+# Docker volumes / logs
+*.log

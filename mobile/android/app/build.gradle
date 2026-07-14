@@ -1,0 +1,50 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def hasGoogleServices = file("google-services.json").exists()
+if (hasGoogleServices) {
+    apply plugin: "com.google.gms.google-services"
+}
+
+android {
+    namespace = "com.gmailnotify.app"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    defaultConfig {
+        applicationId = "com.gmailnotify.app"
+        minSdk = 23
+        targetSdk = flutter.targetSdkVersion
+        versionCode = 1
+        versionName = "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    if (hasGoogleServices) {
+        implementation platform("com.google.firebase:firebase-bom:33.1.2")
+        implementation "com.google.firebase:firebase-messaging"
+    }
+}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gmail Notify</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <section id="auth-view" class="panel">
+      <header class="brand">
+        <div class="logo">✉</div>
+        <h1>Gmail Notify</h1>
+        <p>OAuth-only Gmail alerts — never your Gmail password.</p>
+      </header>
+      <div class="tabs">
+        <button type="button" class="tab active" data-tab="login">Sign in</button>
+        <button type="button" class="tab" data-tab="register">Register</button>
+      </div>
+      <form id="login-form" class="form">
+        <label>Email <input name="email" type="email" required /></label>
+        <label>Password <input name="password" type="password" minlength="8" required /></label>
+        <button type="submit">Sign in</button>
+      </form>
+      <div id="login-extra" class="alt-login">
+        <div class="divider"><span>or try another option</span></div>
+        <button type="button" id="btn-qr-login" class="ghost full">
+          Sign in with Gmail QR code
+        </button>
+      </div>
+      <form id="register-form" class="form hidden">
+        <label>Display name <input name="display_name" required /></label>
+        <label>Email <input name="email" type="email" required /></label>
+        <label>Password <input name="password" type="password" minlength="8" required /></label>
+        <button type="submit">Create account</button>
+      </form>
+      <p id="auth-error" class="error" hidden></p>
+    </section>
+
+    <div id="qr-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="qr-title">
+      <div class="modal-backdrop" data-close-qr></div>
+      <div class="modal-card">
+        <button type="button" class="modal-close" data-close-qr aria-label="Close">×</button>
+        <h2 id="qr-title">Scan with your phone</h2>
+        <p class="hint">Open your phone camera or Google app, scan this QR code, then choose your Gmail account. We never ask for your Gmail password.</p>
+        <div id="qr-code" class="qr-frame" aria-live="polite"></div>
+        <p id="qr-status" class="qr-status">Waiting for scan…</p>
+        <p id="qr-hint" class="hint small"></p>
+        <div class="modal-actions">
+          <a id="qr-open-link" class="ghost" href="#" target="_blank" rel="noopener">Open link on this device</a>
+          <button type="button" id="btn-qr-refresh" class="ghost">New QR code</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="main-view" class="hidden">
+      <header class="topbar">
+        <strong>Gmail Notify</strong>
+        <div class="topbar-actions">
+          <span id="user-label"></span>
+          <button type="button" id="btn-logout" class="ghost">Sign out</button>
+        </div>
+      </header>
+      <nav class="nav">
+        <button type="button" class="nav-btn active" data-page="notifications">Alerts</button>
+        <button type="button" class="nav-btn" data-page="accounts">Accounts</button>
+        <button type="button" class="nav-btn" data-page="settings">Settings</button>
+      </nav>
+
+      <main>
+        <div id="page-notifications" class="page">
+          <div class="page-header">
+            <h2>Inbox alerts</h2>
+            <div>
+              <button type="button" id="btn-mark-all" class="ghost">Mark all read</button>
+              <button type="button" id="btn-refresh-notif">Refresh</button>
+            </div>
+          </div>
+          <div id="notif-list" class="list"></div>
+        </div>
+
+        <div id="page-accounts" class="page hidden">
+          <div class="page-header">
+            <h2>Gmail accounts</h2>
+            <div>
+              <button type="button" id="btn-refresh-accounts" class="ghost">Refresh</button>
+              <button type="button" id="btn-link-gmail">Connect Gmail</button>
+            </div>
+          </div>
+          <p class="hint">Linking opens Google OAuth. We store encrypted tokens only.</p>
+          <div id="accounts-list" class="list"></div>
+        </div>
+
+        <div id="page-settings" class="page hidden">
+          <div class="page-header"><h2>Settings</h2></div>
+          <form id="settings-form" class="form settings">
+            <label class="check"><input type="checkbox" name="enabled" /> Push notifications</label>
+            <label class="check"><input type="checkbox" name="only_primary" /> Primary inbox only</label>
+            <label class="check"><input type="checkbox" name="include_spam" /> Include spam</label>
+            <label class="check"><input type="checkbox" name="quiet_hours_enabled" /> Quiet hours</label>
+            <div class="row">
+              <label>Start <input name="quiet_hours_start" placeholder="22:00" /></label>
+              <label>End <input name="quiet_hours_end" placeholder="07:00" /></label>
+            </div>
+            <label>Keyword filter <input name="keyword_filter" /></label>
+            <label>Sender allowlist <input name="sender_allowlist" placeholder="@company.com" /></label>
+            <label class="check"><input type="checkbox" name="dark_mode" id="dark-mode" /> Dark mode</label>
+            <button type="submit">Save settings</button>
+          </form>
+        </div>
+      </main>
+    </section>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

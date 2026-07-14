@@ -1,0 +1,12 @@
+# Build context ignores
+.git
+.gitignore
+.env
+*.md
+bin/
+**/*_test.go
+credentials/*.json
+!credentials/.gitkeep
+.DS_Store
+.idea/
+.vscode/

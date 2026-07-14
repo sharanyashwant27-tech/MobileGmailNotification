@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: gmail_user
+      POSTGRES_PASSWORD: gmail_pass
+      POSTGRES_DB: gmail_notifications
+    ports:
+      - "5438:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Alphabetical: 001_init.sql then 002_qr_login.sql
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gmail_user -d gmail_notifications"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    image: gmail-notification-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - gmail-notification-api:latest
+        - gmail-notification-api:1.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://gmail_user:gmail_pass@postgres:5432/gmail_notifications?sslmode=disable
+      APP_PORT: "8088"
+      APP_BASE_URL: "http://localhost:8088"
+      GOOGLE_REDIRECT_URI: "http://localhost:8088/api/v1/oauth/google/callback"
+      FIREBASE_CREDENTIALS_FILE: /app/credentials/firebase-service-account.json
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./credentials:/app/credentials:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8088/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+
+volumes:
+  pgdata:

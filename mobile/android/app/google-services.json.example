@@ -1,0 +1,2 @@
+Place `google-services.json` from the Firebase Android app here.
+Without it, FCM will not work; the UI and API still function.
