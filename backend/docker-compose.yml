@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
       tags:
         - gmail-notification-api:latest
-        - gmail-notification-api:1.0.0
+        - gmail-notification-api:1.1.0
     depends_on:
       postgres:
         condition: service_healthy

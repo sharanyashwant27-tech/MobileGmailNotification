@@ -30,7 +30,7 @@ Images:
 
 | Image | Tag | Description |
 |-------|-----|-------------|
-| `gmail-notification-api` | `latest`, `1.0.0` | API + web UI on port **8088** |
+| `gmail-notification-api` | `latest`, `1.1.0` | API + web UI on port **8088** |
 | `postgres` | `16-alpine` | Database (host port **5438**) |
 
 ### Build and run
@@ -67,7 +67,7 @@ docker compose down -v       # stop and wipe Postgres volume (re-runs migrations
 
 ```bash
 cd backend
-docker build -t gmail-notification-api:latest -t gmail-notification-api:1.0.0 .
+docker build -t gmail-notification-api:latest -t gmail-notification-api:1.1.0 .
 ```
 
 ### Ports
@@ -172,6 +172,30 @@ Copy `backend/.env.example` → `backend/.env`. Important keys:
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI`
 - `DATABASE_URL` — in Compose this is overridden to the `postgres` service
 - `FIREBASE_CREDENTIALS_FILE` — optional; FCM becomes a no-op if missing
+
+## Troubleshooting
+
+**`http://localhost:8088` not responding**
+
+Usually the Postgres container stopped (e.g. after a host reboot or Docker restart), so the API crash-loops with `database connection failed ... lookup postgres ... no such host`. Bring the stack back up:
+
+```bash
+cd backend
+docker compose up -d
+docker compose ps          # both services should be "healthy"
+docker compose logs -f api
+```
+
+If it persists, do a clean restart:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+The `api` service uses `depends_on: postgres (service_healthy)` and `restart: unless-stopped`, so it recovers automatically once Postgres is healthy.
+
+**Port already in use** — another process holds `8088` (or `5438`). Stop it, or change the host port mapping in `docker-compose.yml`.
 
 ## Security
 
